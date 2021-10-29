@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bikcode.firebaseappinitialcourse.databinding.ActivityMainBinding
+import com.bikcode.firebaseappinitialcourse.util.showToast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@MainActivity, "An error ocurred", Toast.LENGTH_SHORT).show()
+                showToast("An error has occurred")
             }
         }
 
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
         dataReference.addValueEventListener(listener)
 
         setListeners()
+
     }
 
     private fun setText(data: String) {
@@ -54,7 +56,13 @@ class MainActivity : AppCompatActivity() {
     private fun setListeners() {
         with(_binding) {
             btnSend.setOnClickListener {
-                dataReference.setValue(tieData.text.toString())
+                dataReference.setValue(tieData.text.toString()).addOnSuccessListener {
+                    showToast("Send")
+                }.addOnFailureListener {
+                    showToast("Something happened")
+                }.addOnCompleteListener {
+                    showToast("Completed")
+                }
             }
 
             btnSend.setOnLongClickListener {
